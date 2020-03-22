@@ -16,7 +16,7 @@
       DevicesService.get(opts).then(function(res){
         var data = res.data || {}
         $scope.devices = data.devices || []
-        $scope.has_more = data.total_count > $scope.devices.length
+        $scope.has_more = data.devices.length > 0 && data.total_count > $scope.devices.length
       })
     }
     $scope.loadMore = function(){
@@ -29,7 +29,7 @@
         $scope.devices = _.uniqBy($scope.devices, function(d){
           return d.id
         })
-        $scope.has_more = data.total_count > $scope.devices.length
+        $scope.has_more = data.devices.length > 0 && data.total_count > $scope.devices.length
       })
     }
 
