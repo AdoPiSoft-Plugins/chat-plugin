@@ -211,7 +211,7 @@ function loadMore(el){
 
     for(var i = 0; i < _chats.length; i++){
       var chat = _chats[i]
-      ul.append( formatChat(chat) )
+      ul.prepend( formatChat(chat) )
     }
 
     if(chats.length < data.total_count){
