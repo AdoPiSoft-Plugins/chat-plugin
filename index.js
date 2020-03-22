@@ -8,5 +8,7 @@ module.exports = {
     await models.init()
     app.use(router)
   },
-  uninstall(){}
+  uninstall(){
+    // called with you uninstall the plugin
+  }
 }
