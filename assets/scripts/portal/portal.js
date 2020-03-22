@@ -141,6 +141,22 @@ function scrollToBottom(el){
   el.scrollTop = el.scrollHeight
 }
 
+function formatChat(chat){
+  var li = document.createElement('li')
+  var innerHTML = '<div class="message '+ (chat.sender_id == device.id ? 'sent' : 'received') + '">'
+  innerHTML = innerHTML + '<strong class="sender">'+ (capitalize(chat.sender_id == device.id ? ('You (' + (device.hostname || device.mac_address) +')') : chat.admin_username)) + '</strong><br/>'
+  innerHTML = innerHTML + '<pre class="text">'+ chat.message.trim() + '</pre>'
+  innerHTML = innerHTML + '<small class="time">' + formatDate(chat.created_at) + '</small></div>'
+  li.innerHTML = innerHTML
+  return li
+}
+
+function formatLoadMore(){
+  var li = document.createElement('li')
+  li.innerHTML = '<li><a class="message load-more" style="border-radius: 5px; display: inline-block; width: 100%; text-align: center;" onclick="loadMore(this)"><span class="text">Load more ...</span></a></li>'
+  return li
+}
+
 var chats = []
 function initChats(){
   var socket = Socket.getInstance()
@@ -153,40 +169,14 @@ function initChats(){
       ul.innerHTML = "";
       for(var i = 0; i < chats.length; i++){
         var chat = chats[i];
-        var li = document.createElement('li')
-        li.innerHTML = `
-          <div class="message ${chat.sender_id == device.id ? 'sent' : 'received'}">
-            <strong class="sender"> ${ capitalize(chat.sender_id == device.id ? `You (${device.hostname || device.mac_address})` : chat.admin_username) }</strong>
-            <br/>
-            <pre class="text">${ chat.message.trim() }</pre>
-            <small class="time"> ${ formatDate(chat.created_at) } </small>
-        </div>
-        `
-        ul.prepend(li)
+        ul.prepend( formatChat(chat) )
       }
       if(chats.length < data.total_count){
-        var li = document.createElement('li')
-        li.innerHTML = `
-          <li>
-            <a class="message load-more" style="border-radius: 5px; display: inline-block; width: 100%; text-align: center;" onclick="loadMore(this)">
-              <span class="text">Load more ...</span>
-            </a>
-          </li>
-        `
-        ul.prepend(li)
+        ul.prepend( formatLoadMore() )
       }
 
       socket.on('chat', function(chat){
-        var li = document.createElement('li')
-        li.innerHTML = `
-          <div class="message ${chat.sender_id == device.id ? 'sent' : 'received'}" style="border: 3px solid #5cb85b;">
-            <strong class="sender"> ${ capitalize(chat.sender_id == device.id ? `You (${device.hostname || device.mac_address})` : chat.admin_username) }</strong>
-            <br/>
-            <pre class="text">${ chat.message.trim() }</pre>
-            <small class="time"> ${ formatDate(chat.created_at) } </small>
-        </div>
-        `
-        ul.append(li)
+        ul.append( formatChat(chat) )
         setTimeout(function(){
           li.querySelector(".message").style.border = "";
         }, 1000)
@@ -219,28 +209,11 @@ function loadMore(el){
 
     for(var i = 0; i < _chats.length; i++){
       var chat = _chats[i]
-      var li = document.createElement('li')
-      li.innerHTML = `
-        <div class="message ${chat.sender_id == device.id ? 'sent' : 'received'}">
-          <strong class="sender"> ${ capitalize(chat.sender_id == device.id ? `You (${device.hostname || device.mac_address})` : chat.admin_username) }</strong>
-          <br/>
-          <pre class="text">${ chat.message.trim() }</pre>
-          <small class="time"> ${ formatDate(chat.created_at) } </small>
-      </div>
-      `
-      ul.prepend(li)
+      ul.append( formatChat(chat) )
     }
 
     if(chats.length < data.total_count){
-      var li = document.createElement('li')
-      li.innerHTML = `
-        <li>
-          <a class="message load-more" style="border-radius: 5px; display: inline-block; width: 100%; text-align: center;" onclick="loadMore(this)">
-            <span class="text">Load more ...</span>
-          </a>
-        </li>
-      `
-      ul.prepend(li)
+      ul.prepend( formatLoadMore() )
     }
   })
 }
