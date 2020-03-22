@@ -200,7 +200,7 @@ function loadMore(el){
     el.remove()
 
   page += 1
-  httpGet(`${chats_api_url}?page=${page}`, function(data){
+  httpGet(chats_api_url+'?page='+page, function(data){
     data = JSON.parse(data)
     var _chats = data.chats
     if(!_chats || _chats.length <= 0) return
