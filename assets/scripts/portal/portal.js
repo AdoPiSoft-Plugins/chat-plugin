@@ -176,7 +176,9 @@ function initChats(){
       }
 
       socket.on('chat', function(chat){
-        ul.append( formatChat(chat) )
+        var li = formatChat(chat)
+        li.querySelector(".message").style.border = "3px solid #5cb85b;";
+        ul.append( li )
         setTimeout(function(){
           li.querySelector(".message").style.border = "";
         }, 1000)
