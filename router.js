@@ -1,8 +1,7 @@
 'use strict'
 
-var express = require('express')
 var core = require('../core')
-var router = express.Router()
+var { router } = core
 var devices_ctrl = require('./controllers/devices_ctrl')
 var chats_ctrl = require('./controllers/chats_ctrl')
 
