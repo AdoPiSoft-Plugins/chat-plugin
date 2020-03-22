@@ -8,6 +8,5 @@ module.exports = {
     await models.init()
     app.use(router)
   },
-  install(){},
-  migrate(){}
+  uninstall(){}
 }
