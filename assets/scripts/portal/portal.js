@@ -21,7 +21,7 @@ function httpGet(url, cb){
       if(cb) cb(xmlhttp.responseText);
     }
   }
-  xmlhttp.open("GET", url, false );
+  xmlhttp.open("GET", url, true );
   xmlhttp.send();
 }
 
@@ -68,7 +68,16 @@ function resizeConversationCon(){
   conv_con.style.height = (conv_con.offsetHeight - (send_msg_con.offsetHeight + 4))+"px"
 }
 
+var audio;
+var audio_url = "/plugins/chat-plugin/assets/sounds/msg.mp3";
+document.addEventListener("click", function(){
+  if(!audio)
+    audio = new Audio(audio_url);
+});
+
 function openChatBox(){
+  if(!audio)
+    audio = new Audio(audio_url);
   var icon = document.querySelector('.main-icon')
   icon.style.display = 'none'
   var el = document.querySelector('.chat-box')
@@ -87,7 +96,22 @@ function closeChatBox(){
   chatBoxOpened = false
 }
 
-var audio;
+function notify(msg) {
+  if (!window.Notification) {
+    return false
+  }
+  else if (Notification.permission === "granted") {
+    var notification = new Notification(msg);
+  }
+  else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(function (permission) {
+      if (permission === "granted") {
+        var notification = new Notification(msg);
+      }
+    });
+  }
+}
+
 function animateIcon(with_sound){
   var icon = document.querySelector('.main-icon')
   icon.style.width = "20px"
@@ -102,14 +126,9 @@ function animateIcon(with_sound){
       clearInterval(interval);
   })
 
-  if(!audio){
-    audio = new Audio();
-    audio.src = "/plugins/chat-plugin/assets/sounds/msg.mp3";
-    audio.load();
-  }
-
   if(with_sound){
-    audio.play();
+    if(audio)
+      audio.play();
   }
 }
 
@@ -191,6 +210,10 @@ function initChats(){
         setTimeout(function(){
           animateIcon()
         }, 300)
+
+        if(chat.sender_id != device.id){
+          notify(capitalize(chat.admin_username)+": "+chat.message);
+        }
       })
     })
   })
@@ -225,9 +248,7 @@ function sendMessage(){
   var msg = input.value
   input.value = ""
   if(!msg) return
-  httpPost(send_api_url, { message: msg}, function(res){
-    console.log(res)
-  })
+  httpPost(send_api_url, { message: msg}, function(res){})
 }
 
 (function () {
