@@ -114,11 +114,15 @@
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
   }
 
+  .message.sent, .message.sent * {
+    background: #209e91!important;
+    color: white !important;
+  }
 </style>
 
 <div class="chat-plugin">
   <a href='javascript:void(0)' onclick="openChatBox()" class="main-icon">
-    <span class='fa fa-asterisk unread-indicator' style="display:none;"></span>
+    <span class="fa fa-asterisk unread-indicator" style="display:none;position:absolute;right:-9px;color: red;top:-9px;"></span>
     <img src="/plugins/chat-plugin/assets/images/question.png" class="normal" alt="">
     <img src="/plugins/chat-plugin/assets/images/question-o.png" class="active" alt="">
   </a>

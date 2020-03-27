@@ -165,3 +165,8 @@
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
+
+.message.sent, .message.sent * {
+  background: #209e91!important;
+  color: white !important;
+}

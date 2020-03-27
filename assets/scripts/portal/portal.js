@@ -45,6 +45,33 @@ function httpPost(url, params, cb){
   xmlhttp.send(JSON.stringify(params||{}));
 }
 
+function disconnected(){
+  if(document.querySelector("li#disconnected")) return;
+  var ul = document.querySelector(".conversation ul.list")
+  var li = document.createElement('li')
+  li.id = 'disconnected'
+  li.style.textAlign = 'center';
+  li.style.padding = "20px";
+  li.innerHTML = "<a href='javascript:window.location.reload()'> Socket disconnected click to reload the page ...</a>";
+  ul.append(li)
+  scrollToBottom()
+}
+
+function reconnected(){
+  var el = document.querySelector('li#disconnected')
+  if(el)
+    el.remove();
+}
+
+function hasUnread(){
+  var el = document.querySelector(".unread-indicator")
+  el.style.display = "";
+}
+function hasRead(){
+  var el = document.querySelector(".unread-indicator")
+  el.style.display = "none";
+}
+
 function initChatBox(){
   var el = document.querySelector('.chat-box')
   var width = Math.min(450, window.innerWidth-20)
@@ -85,6 +112,7 @@ function openChatBox(){
   resizeConversationCon()
   scrollToBottom()
   chatBoxOpened = true
+  hasRead()
 }
 
 function closeChatBox(){
@@ -179,6 +207,17 @@ function formatLoadMore(){
 var chats = []
 function initChats(){
   var socket = Socket.getInstance()
+  if(socket.disconnected)
+    disconnected();
+
+  socket.on('connection', function(){
+    reconnected()
+  });
+
+  socket.on('disconnect', function(){
+    disconnected()
+  });
+
   httpGet(device_api_url, function(device_data){
     device = JSON.parse(device_data)
     httpGet(chats_api_url, function(data){
@@ -213,6 +252,12 @@ function initChats(){
 
         if(chat.sender_id != device.id){
           notify(capitalize(chat.admin_username)+": "+chat.message);
+        }
+
+        if(!chatBoxOpened){
+          hasUnread();
+        }else{
+          hasRead()
         }
       })
     })
