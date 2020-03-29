@@ -25,7 +25,7 @@
 
     $scope.page = 1
     this.$doCheck = function () {
-      if ( _this.contact && !angular.equals(($scope.contact||{}).id, _this.contact.id)) {
+      if ( _this.contact && ($scope.contact||{}).id != _this.contact.id ) {
         $scope.page = 1
         $scope.contact = angular.copy(_this.contact);
         var opts = {
