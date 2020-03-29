@@ -7,6 +7,8 @@ var chats_ctrl = require('./controllers/chats_ctrl')
 
 router.get('/chat-plugin/devices', core.middlewares.auth, devices_ctrl.get)
 router.get('/chat-plugin/device/:mobile_device_id', devices_ctrl.getDeviceData)
+router.post('/chat-plugin/chats/:mobile_device_id/mute', core.middlewares.auth, devices_ctrl.muteDevice)
+router.post('/chat-plugin/chats/:mobile_device_id/unmute', core.middlewares.auth, devices_ctrl.unmuteDevice)
 router.get('/chat-plugin/chats/:mobile_device_id', core.middlewares.auth, chats_ctrl.getClientMessages)
 router.post('/chat-plugin/chats/bulk-send', core.middlewares.auth, chats_ctrl.bulkSendToClients)
 router.post('/chat-plugin/chats/:mobile_device_id', core.middlewares.auth, chats_ctrl.sendToClient)

@@ -2,9 +2,11 @@
 
 var { dbi, machine_id } = require('../../core')
 var Chat = require('./chat')
+var MutedDevice = require('./muted_device')
 
 var model_files = {
-  Chat
+  Chat,
+  MutedDevice
 }
 
 exports.init = async () => {
@@ -26,6 +28,8 @@ exports.init = async () => {
   dbi.models.Chat.addScope('default_scope', default_scope)
   dbi.models.Chat.belongsTo( dbi.models.MobileDevice )
   dbi.models.MobileDevice.hasMany(dbi.models.Chat)
+  dbi.models.MutedDevice.addScope('default_scope', default_scope)
+  dbi.models.MutedDevice.belongsTo( dbi.models.MobileDevice )
 
   return dbi
 }

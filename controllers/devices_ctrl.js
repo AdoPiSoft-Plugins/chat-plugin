@@ -72,8 +72,39 @@ exports.get = async (req, res, next) => {
 exports.getDeviceData = async(req, res, next)=>{
   try{
     var { mobile_device_id } = req.params
+    var is_muted = !!(await core.dbi.models.MutedDevice.findOne({ where: { mobile_device_id } }))
     var device = await core.devices_manager.loadDevice(mobile_device_id)
-    res.json(device)
+    res.json(Object.assign(device.toJSON(), { is_muted }))
+  }catch(e){
+    next(e)
+  }
+}
+
+exports.muteDevice = async(req, res, next)=>{
+  try{
+    var { mobile_device_id } = req.params
+    var device = await core.devices_manager.loadDevice(mobile_device_id)
+    await core.dbi.models.MutedDevice.create({
+      machine_id: core.machine_id,
+      mobile_device_id,
+      muted_at: new Date()
+    })
+    device.emit("chat:mute")
+    res.json({})
+  }catch(e){
+    next(e)
+  }
+}
+
+exports.unmuteDevice = async(req, res, next)=>{
+  try{
+    var { mobile_device_id } = req.params
+    var device = await core.devices_manager.loadDevice(mobile_device_id)
+    await core.dbi.models.MutedDevice.destroy({
+      where: { mobile_device_id }
+    })
+    device.emit("chat:unmute")
+    res.json({})
   }catch(e){
     next(e)
   }

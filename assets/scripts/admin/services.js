@@ -43,6 +43,14 @@
       this.getDeviceData = function(mobile_device_id){
         return $http.get('/chat-plugin/device/'+mobile_device_id).catch(CatchHttpError);
       }
+
+      this.muteDevice = function(mobile_device_id){
+        return $http.post('/chat-plugin/chats/'+ mobile_device_id +'/mute').catch(CatchHttpError);
+      }
+
+      this.unmuteDevice = function(mobile_device_id){
+        return $http.post('/chat-plugin/chats/'+ mobile_device_id +'/unmute').catch(CatchHttpError);
+      }
     }
   ]);
 

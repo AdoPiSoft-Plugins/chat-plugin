@@ -204,6 +204,18 @@ function formatLoadMore(){
   return li
 }
 
+function mute(){
+  var input = document.querySelector('#chat_message')
+  input.title = "Muted"
+  input.disabled = true
+}
+
+function unmute(){
+  var input = document.querySelector('#chat_message')
+  input.title = ""
+  input.disabled = false
+}
+
 var chats = []
 function initChats(){
   var socket = Socket.getInstance()
@@ -218,11 +230,20 @@ function initChats(){
     disconnected()
   });
 
+  socket.on('chat:mute', function(){
+    mute()
+  });
+
+  socket.on('chat:unmute', function(){
+    unmute()
+  });
+
   httpGet(device_api_url, function(device_data){
     device = JSON.parse(device_data)
     httpGet(chats_api_url, function(data){
       data = JSON.parse(data)
       chats = data.chats
+      if(data.is_muted) mute()
       var ul = document.querySelector(".conversation ul.list")
       ul.innerHTML = "";
       for(var i = 0; i < chats.length; i++){
