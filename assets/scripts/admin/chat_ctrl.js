@@ -10,7 +10,7 @@
       contact: '='
     }
   })
-  .controller('ChatsCtrl', function($scope, ChatService, toastr, CatchHttpError, $timeout, $ngConfirm, Socket){
+  .controller('ChatsCtrl', function($scope, ChatService, DevicesService, toastr, CatchHttpError, $timeout, $ngConfirm, Socket){
     var socket = Socket.getSocket();
     var _this = this
     var scrollToBottom = function(){
@@ -25,7 +25,7 @@
 
     $scope.page = 1
     this.$doCheck = function () {
-      if (!angular.equals($scope.contact, _this.contact)) {
+      if ( _this.contact && !angular.equals(($scope.contact||{}).id, _this.contact.id)) {
         $scope.page = 1
         $scope.contact = angular.copy(_this.contact);
         var opts = {
@@ -39,6 +39,11 @@
           scrollToBottom()
         }).finally(function(){
           $scope.loadingMessages = false;
+        })
+
+        DevicesService.getDeviceData($scope.contact.id).then(function(res){
+          var data = res.data || {}
+          $scope.contact.is_muted = !!data.is_muted
         })
       };
     }
@@ -102,6 +107,20 @@
           }
         }
       });
+    }
+
+    $scope.muteDevice = function(device){
+      return DevicesService.muteDevice(device.id).then(function(){
+        device.is_muted = true
+        toastr.success(device.hostname +" successfully muted")
+      })
+    }
+
+    $scope.unmuteDevice = function(device){
+      return DevicesService.unmuteDevice(device.id).then(function(){
+        device.is_muted = false
+        toastr.success(device.hostname +" successfully unmuted")
+      })
     }
 
     socket.on('chat', function(chat){

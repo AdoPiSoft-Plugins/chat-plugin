@@ -87,7 +87,9 @@ exports.getMessages = async(req, res, next)=>{
     var where = { mobile_device_id }
     var result = await core.dbi.models.Chat.findAndCountAll({ where, limit: per_page, offset, order })
 
+    var is_muted = !!(await core.dbi.models.MutedDevice.findOne({ where }))
     res.json({
+      is_muted,
       chats: result.rows,
       count: result.rows.length,
       total_count: result.count
@@ -102,6 +104,10 @@ exports.sendMessage = async(req, res, next)=>{
     var { params, body, query, device } = req
     Object.assign(params, body, query)
     var mobile_device_id = device.db_instance.id
+
+    var is_muted = !!(await core.dbi.models.MutedDevice.findOne({ where: { mobile_device_id } }))
+    if(is_muted) return next("You don't have permission to send message.")
+
     var { admin_username, message } = params
     if(!admin_username){
       var admins = await core.accounts.getAll()
