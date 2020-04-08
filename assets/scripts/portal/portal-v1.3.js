@@ -99,12 +99,22 @@ var audio;
 var audio_url = "/plugins/chat-plugin/assets/sounds/msg.mp3";
 document.addEventListener("click", function(){
   if(!audio)
-    audio = new Audio(audio_url);
+    audio = new Howl({
+      src: [audio_url],
+      loop: false,
+      buffer: false,
+      preload: true
+    })
 });
 
 function openChatBox(){
   if(!audio)
-    audio = new Audio(audio_url);
+    audio = new Howl({
+      src: [audio_url],
+      loop: false,
+      buffer: false,
+      preload: true
+    })
   var icon = document.querySelector('.main-icon')
   icon.style.display = 'none'
   var el = document.querySelector('.chat-box')
