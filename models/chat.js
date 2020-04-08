@@ -26,8 +26,13 @@ module.exports = (sequelize, Sequelize) => {
     message: {
       type: Sequelize.TEXT
     },
-    is_read: {
-      type: Sequelize.BOOLEAN
+    is_read_by_user: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
+    is_read_by_admin: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
     },
     created_at: {
       allowNull: false,

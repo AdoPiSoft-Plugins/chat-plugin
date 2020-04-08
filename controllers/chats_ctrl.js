@@ -1,6 +1,6 @@
 'use strict'
 var core = require('../../core')
-var { admin_socket } = core
+var { admin_socket, machine_id } = core
 var default_per_page = 8
 
 exports.getClientMessages = async (req, res, next) => {
@@ -32,10 +32,12 @@ exports.sendToClient = async(req, res, next)=>{
     var device_db_instance = await core.dbi.models.MobileDevice.findByPk(mobile_device_id) || {}
     var admin = req.account
     var chat = await core.dbi.models.Chat.create({
+      machine_id,
       mobile_device_id,
       admin_username: admin.username,
       message: params.message,
-      sender_id: admin.username
+      sender_id: admin.username,
+      is_read_by_admin: true
     })
     var device = await core.devices_manager.findByMAC(device_db_instance.mac_address)
     if(device)
@@ -64,7 +66,8 @@ exports.bulkSendToClients = async(req, res, next)=>{
         mobile_device_id,
         admin_username: admin.username,
         message: params.message,
-        sender_id: admin.username
+        sender_id: admin.username,
+        is_read_by_admin: true
       })
       device.emit("chat", chat)
       admin_socket.emitAdmin('chat', chat)
@@ -114,14 +117,39 @@ exports.sendMessage = async(req, res, next)=>{
       admin_username = admins[0].username
     }
     var chat = await core.dbi.models.Chat.create({
+      machine_id,
       mobile_device_id,
       admin_username,
       message,
-      sender_id: mobile_device_id
+      sender_id: mobile_device_id,
+      is_read_by_user: true
     })
     device.emit("chat", chat)
     admin_socket.emitAdmin('chat', chat)
     res.json({success: true})
+  }catch(e){
+    next(e)
+  }
+}
+
+exports.readClientMessages = async(req, res, next)=>{
+  var { mobile_device_id } = req.params
+  try{
+    var where = {mobile_device_id}
+    var result = await core.dbi.models.Chat.update({is_read_by_admin: true}, { where})
+    res.json({})
+  }catch(e){
+    next(e)
+  }
+}
+
+exports.readAdminMessages = async(req, res, next)=>{
+  var { device } = req
+  try{
+    var mobile_device_id = device.db_instance.id
+    var where = {mobile_device_id}
+    var result = await core.dbi.models.Chat.update({is_read_by_user: true}, { where })
+    res.json({})
   }catch(e){
     next(e)
   }

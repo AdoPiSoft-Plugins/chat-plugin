@@ -27,6 +27,7 @@ function array_move(arr, old_index, new_index) {
       DevicesService.get(opts).then(function(res){
         var data = res.data || {}
         $scope.devices = data.devices || []
+        $scope.$parent.has_unread = _.findIndex($scope.devices, function(d){ return d.has_unread }) >= 0;
         $scope.has_more = data.devices.length > 0 && data.total_count > $scope.devices.length
       })
     }
@@ -50,10 +51,11 @@ function array_move(arr, old_index, new_index) {
     }
 
     $scope.focusChat = function(contact){
-      contact.has_unread = false;
       $scope.$parent.focusChat(contact);
-
-      $scope.$parent.has_unread = _.findIndex($scope.devices, function(d){ return d.has_unread }) >= 0
+      ChatService.markMessagesRead(contact.id).then(function(){
+        contact.has_unread = false;
+        $scope.$parent.has_unread = _.findIndex($scope.devices, function(d){ return d.has_unread }) >= 0
+      })
     }
 
     $scope.messageAll = function(e){

@@ -1,6 +1,7 @@
 var chats_api_url = "/chat-plugin/portal/chats";
 var send_api_url = "/chat-plugin/portal/chat"
 var device_api_url = "/client/device"
+var mark_read_api_url = "/chat-plugin/portal/mark-read"
 var chatBoxOpened = false
 var device
 
@@ -52,7 +53,7 @@ function disconnected(){
   li.id = 'disconnected'
   li.style.textAlign = 'center';
   li.style.padding = "20px";
-  li.innerHTML = "<a href='javascript:window.location.reload()'> Socket disconnected click to reload the page ...</a>";
+  li.innerHTML = "<a href='javascript:window.location.reload()'>Something went wrong, please reload this page</a>";
   ul.append(li)
   scrollToBottom()
 }
@@ -70,6 +71,7 @@ function hasUnread(){
 function hasRead(){
   var el = document.querySelector(".unread-indicator")
   el.style.display = "none";
+  return httpGet(mark_read_api_url)
 }
 
 function initChatBox(){
@@ -95,17 +97,13 @@ function resizeConversationCon(){
   conv_con.style.height = (conv_con.offsetHeight - (send_msg_con.offsetHeight + 4))+"px"
 }
 
-var audio;
 var audio_url = "/plugins/chat-plugin/assets/sounds/msg.mp3";
-document.addEventListener("click", function(){
-  if(!audio)
-    audio = new Howl({
-      src: [audio_url],
-      loop: false,
-      buffer: false,
-      preload: true
-    })
-});
+var audio = new Howl({
+  src: [audio_url],
+  loop: false,
+  buffer: false,
+  preload: true
+})
 
 function openChatBox(){
   if(!audio)
@@ -200,6 +198,7 @@ function scrollToBottom(el){
 
 function formatChat(chat){
   var li = document.createElement('li')
+  li.id = 'message-'+chat.id
   var innerHTML = '<div class="message '+ (chat.sender_id == device.id ? 'sent' : 'received') + '">'
   innerHTML = innerHTML + '<strong class="sender">'+ (capitalize(chat.sender_id == device.id ? ('You (' + (device.hostname || device.mac_address) +')') : chat.admin_username)) + '</strong><br/>'
   innerHTML = innerHTML + '<pre class="text">'+ chat.message.trim() + '</pre>'
@@ -242,10 +241,12 @@ function initChats(){
 
   socket.on('chat:mute', function(){
     mute()
+    reconnected()
   });
 
   socket.on('chat:unmute', function(){
     unmute()
+    reconnected()
   });
 
   httpGet(device_api_url, function(device_data){
@@ -263,15 +264,17 @@ function initChats(){
       if(chats.length < data.total_count){
         ul.prepend( formatLoadMore() )
       }
-
       socket.on('chat', function(chat){
         var li = formatChat(chat)
         li.querySelector(".message").style.border = "3px solid #5cb85b";
+        li.classList.add('new-message')
         ul.append( li )
         setTimeout(function(){
           li.querySelector(".message").style.border = "";
         }, 1000)
-
+        setTimeout(function(){
+          li.classList.remove('new-message')
+        }, 3000)
         setTimeout(function(){
           scrollToBottom()
         })
@@ -279,7 +282,7 @@ function initChats(){
         animateIcon( chat.sender_id != device.id )
         setTimeout(function(){
           animateIcon()
-        }, 300)
+        })
 
         if(chat.sender_id != device.id){
           notify(capitalize(chat.admin_username)+": "+chat.message);
@@ -290,7 +293,10 @@ function initChats(){
         }else{
           hasRead()
         }
+        reconnected()
       })
+      var has_unread = chats.findIndex(function(c){ return !c.is_read_by_user }) >= 0
+      if(has_unread) hasUnread();
     })
   })
 }
@@ -325,6 +331,11 @@ function sendMessage(){
   input.value = ""
   if(!msg) return
   httpPost(send_api_url, { message: msg}, function(res){})
+  setTimeout(function(){
+    if(!document.querySelector('.new-message')){
+      disconnected()
+    }
+  }, 3000)
 }
 
 (function () {
