@@ -28,11 +28,11 @@ module.exports = (sequelize, Sequelize) => {
     },
     is_read_by_user: {
       type: Sequelize.BOOLEAN,
-      defaultValue: false
+      defaultValue: true
     },
     is_read_by_admin: {
       type: Sequelize.BOOLEAN,
-      defaultValue: false
+      defaultValue: true
     },
     created_at: {
       allowNull: false,

@@ -37,7 +37,8 @@ exports.sendToClient = async(req, res, next)=>{
       admin_username: admin.username,
       message: params.message,
       sender_id: admin.username,
-      is_read_by_admin: true
+      is_read_by_admin: true,
+      is_read_by_user: false
     })
     var device = await core.devices_manager.findByMAC(device_db_instance.mac_address)
     if(device)
@@ -67,7 +68,8 @@ exports.bulkSendToClients = async(req, res, next)=>{
         admin_username: admin.username,
         message: params.message,
         sender_id: admin.username,
-        is_read_by_admin: true
+        is_read_by_admin: true,
+        is_read_by_user: false
       })
       device.emit("chat", chat)
       admin_socket.emitAdmin('chat', chat)
@@ -122,7 +124,8 @@ exports.sendMessage = async(req, res, next)=>{
       admin_username,
       message,
       sender_id: mobile_device_id,
-      is_read_by_user: true
+      is_read_by_admin: false,
+      is_read_by_user: true,
     })
     device.emit("chat", chat)
     admin_socket.emitAdmin('chat', chat)

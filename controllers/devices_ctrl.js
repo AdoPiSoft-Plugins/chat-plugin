@@ -11,7 +11,8 @@ exports.get = async (req, res, next) => {
 
     var limit = parseInt(per_page)
     var offset = (page - 1) * limit
-    var { Op } = dbi.Sequelize
+    var sequelize = dbi.Sequelize
+    var { Op } = sequelize
 
     var search_q = q
     var where = {}
@@ -44,27 +45,30 @@ exports.get = async (req, res, next) => {
         )
       }
     }
-
-    var result = await dbi.models.MobileDevice.scope(['default_scope']).findAndCountAll({
+    var total_count = await dbi.models.MobileDevice.scope(['default_scope']).count({where})
+    var result = await dbi.models.MobileDevice.scope(['default_scope']).findAll({
       distinct: true,
       where, limit, offset,
       include: [{
         model: dbi.models.Chat,
-        where: {is_read_by_admin: false},
-        required: false,
-        duplicating: false
+        order: [['is_read_by_admin', 'ASC']],
+        limit: 1,
+        required: false
       }],
-      order: [['Chats','created_at', 'DESC NULLS LAST'], ['active', 'DESC']]
+      order: [
+        ['active', 'DESC']
+      ]
     })
-    var devices = result.rows.map(d => {
+    var devices = result.map(d => {
       d = d.toJSON()
       d.has_unread = d.Chats.length > 0
       return d
-    })
+    }).sort(d=> !d.has_unread )
+
     res.json({
       devices,
       count: devices.length,
-      total_count: result.count
+      total_count
     })
   }catch(e){
     next(e)
