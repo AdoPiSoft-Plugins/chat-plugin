@@ -129,7 +129,7 @@
         if(exists) return
         $scope.chats.push(chat)
         scrollToBottom()
-        $timeout(function(){
+        ChatService.markMessagesRead(chat.mobile_device_id).then(function(){
           $(".conversation .message:last:not(.placeholder)").css("border", "5px solid #209e91")
           if($(`.conversation.device-${_this.contact.id}`).is(":visible")){
             _this.contact.has_unread = false

@@ -50,17 +50,19 @@ exports.get = async (req, res, next) => {
       where, limit, offset,
       include: [{
         model: dbi.models.Chat,
+        where: {is_read_by_admin: false},
+        required: false,
+        duplicating: false
       }],
       order: [['Chats','created_at', 'DESC NULLS LAST'], ['active', 'DESC']]
     })
-
-    var devices = result.rows.map( (r)=>{
-      var d = new core.classes.MobileDevice(r)
+    var devices = result.rows.map(d => {
+      d = d.toJSON()
+      d.has_unread = d.Chats.length > 0
       return d
     })
-
     res.json({
-      devices: devices,
+      devices,
       count: devices.length,
       total_count: result.count
     })

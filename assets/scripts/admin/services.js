@@ -26,6 +26,10 @@
       this.deleteConversation = function(mobile_device_id){
         return $http.delete('/chat-plugin/chats/'+mobile_device_id).catch(CatchHttpError);
       }
+
+      this.markMessagesRead = function(mobile_device_id){
+        return $http.post('/chat-plugin/chats/'+mobile_device_id+'/mark-read').catch(CatchHttpError);
+      }
     }
   ])
   .service('DevicesService', [
