@@ -61,7 +61,7 @@ exports.get = async (req, res, next) => {
     })
     var devices = result.map(d => {
       d = d.toJSON()
-      d.has_unread = d.Chats.length > 0
+      d.has_unread = d.Chats.filter(c=> !c.is_read_by_admin ).length > 0
       return d
     }).sort(d=> !d.has_unread )
 
