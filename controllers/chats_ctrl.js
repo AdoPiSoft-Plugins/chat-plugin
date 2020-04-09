@@ -43,6 +43,8 @@ exports.sendToClient = async(req, res, next)=>{
     var device = await core.devices_manager.findByMAC(device_db_instance.mac_address)
     if(device){
       device.emit("chat", chat)
+
+      // android app notification
       notification.add(device_db_instance.id, {title: "Message", content: `Admin: ${chat.message}`})
     }
     admin_socket.emitAdmin('chat', chat)
@@ -75,6 +77,9 @@ exports.bulkSendToClients = async(req, res, next)=>{
       })
       device.emit("chat", chat)
       admin_socket.emitAdmin('chat', chat)
+
+      // android app notification
+      notification.add(mobile_device_id, {title: "Message", content: `Admin: ${chat.message}`})
     }
     res.json({success: true})
   }catch(e){
@@ -85,6 +90,7 @@ exports.bulkSendToClients = async(req, res, next)=>{
 exports.getMessages = async(req, res, next)=>{
   var { device } = req
   try{
+    var os = (req.headers['user-agent']+"").toLowerCase().includes("android")? 'android' : ''
     var mobile_device_id = device.db_instance.id
     var { page, per_page } = req.query
     per_page = !isNaN(per_page)? parseInt(per_page) : default_per_page
@@ -99,7 +105,8 @@ exports.getMessages = async(req, res, next)=>{
       is_muted,
       chats: result.rows,
       count: result.rows.length,
-      total_count: result.count
+      total_count: result.count,
+      os
     })
   }catch(e){
     next(e)
