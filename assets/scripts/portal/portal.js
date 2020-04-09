@@ -4,6 +4,7 @@ var device_api_url = "/client/device"
 var mark_read_api_url = "/chat-plugin/portal/mark-read"
 var chatBoxOpened = false
 var device
+var os;
 
 function httpGet(url, cb){
   var xmlhttp
@@ -136,7 +137,7 @@ function notify(msg) {
   if(typeof(AndroidFunction) != 'undefined' && AndroidFunction.showNotification){
     AndroidFunction.showNotification(msg)
   }
-  
+
   if (!window.Notification) {
     return false
   }
@@ -256,10 +257,11 @@ function initChats(){
   httpGet(device_api_url, function(device_data){
     device = JSON.parse(device_data)
     httpGet(chats_api_url, function(data){
+      var ul = document.querySelector(".conversation ul.list")
       data = JSON.parse(data)
       chats = data.chats
+      os = data.os
       if(data.is_muted) mute()
-      var ul = document.querySelector(".conversation ul.list")
       ul.innerHTML = "";
       for(var i = 0; i < chats.length; i++){
         var chat = chats[i];
@@ -303,6 +305,10 @@ function initChats(){
       if(has_unread) hasUnread();
     })
   })
+
+  setTimeout(function(){
+    promptAppInstallation()
+  }, 8000)
 }
 
 var page = 1
@@ -340,6 +346,22 @@ function sendMessage(){
       disconnected()
     }
   }, 3000)
+}
+
+function promptAppInstallation(){
+  if(os != 'android' || window.location.search == '?ad') return
+  var ul = document.querySelector(".conversation ul.list")
+  var li = document.createElement('li')
+  li.id = 'message-0'
+  var innerHTML = '<div class="message received">'
+  innerHTML = innerHTML + '<strong class="sender">Admin</strong><br/>'
+  innerHTML = innerHTML + '<pre class="text" style="padding-bottom: 0;margin-bottom: 0;">Install CaptivePortal App to receive instant notifications</pre>'
+  innerHTML = innerHTML + '<p style=" text-align: center; "><a style=" background: #209e91!important; color: white !important; padding: 10px; border-radius: 10px; display: inline-block; width: 210px; text-align: center; margin:10px;" href="/plugins/chat-plugin/assets/captive-portal.apk">Download App</a></p>';
+  innerHTML = innerHTML + '<small class="time">' + formatDate(new Date()) + '</small></div>'
+  li.innerHTML = innerHTML
+  ul.append( li )
+  hasUnread();
+  animateIcon(true);
 }
 
 (function () {
