@@ -45,7 +45,7 @@ exports.sendToClient = async(req, res, next)=>{
       device.emit("chat", chat)
 
       // android app notification
-      notification.add(device_db_instance.id, {title: "Message", content: `Admin: ${chat.message}`})
+      notification.add(device_db_instance.id, {title: "Message from Admin:", content: `${chat.message}`})
     }
     admin_socket.emitAdmin('chat', chat)
 
@@ -79,7 +79,7 @@ exports.bulkSendToClients = async(req, res, next)=>{
       admin_socket.emitAdmin('chat', chat)
 
       // android app notification
-      notification.add(mobile_device_id, {title: "Message", content: `Admin: ${chat.message}`})
+      notification.add(mobile_device_id, {title: "Message from Admin", content: `${chat.message}`})
     }
     res.json({success: true})
   }catch(e){
