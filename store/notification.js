@@ -43,7 +43,7 @@ exports.subscribe = async(device)=>{
       if (!notified){
         exports.add(device_id, {
           title: "LOW CREDITS",
-          content: "Warning: Low credits, you will get disconnected soon"
+          content: "You are running out of credits. Insert coin now to avoid interruption"
         })
         notified = true
       }
