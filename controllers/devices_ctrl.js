@@ -1,5 +1,6 @@
 'use strict'
 var core = require('../../core')
+var notification = require("../store/notification")
 var default_per_page = 20
 
 exports.get = async (req, res, next) => {
@@ -18,6 +19,9 @@ exports.get = async (req, res, next) => {
     var where = {}
     if (search_q) {
       where[Op.or] = [
+        {
+          id: search_q
+        },
         {
           hostname: {
             [Op.like]: `%${search_q}%`
@@ -112,6 +116,18 @@ exports.unmuteDevice = async(req, res, next)=>{
     device.emit("chat:unmute")
     res.json({})
   }catch(e){
+    next(e)
+  }
+}
+
+exports.getNotifications = async(req, res, next)=>{
+  try{
+    var { device } = req
+    notification.subscribe(device)
+    var [notif] = notification.get(device.db_instance.id) || []
+    res.json(notif||{})
+  }catch(e){
+    console.log(e)
     next(e)
   }
 }
