@@ -308,7 +308,7 @@ function initChats(){
 
   setTimeout(function(){
     promptAppInstallation()
-  }, 8000)
+  }, 3000)
 }
 
 var page = 1

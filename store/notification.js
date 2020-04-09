@@ -43,7 +43,7 @@ exports.subscribe = async(device)=>{
       if (!notified){
         exports.add(device_id, {
           title: "LOW CREDITS",
-          content: "Warning: Low credits, you will get disconnected soon"
+          content: "You are running out of credits. Insert coin now to avoid interruption"
         })
         notified = true
       }
@@ -53,10 +53,6 @@ exports.subscribe = async(device)=>{
   }, 1000)
   var disconnected = ()=>{
     clearInterval(interval)
-    exports.add(device_id, {
-      title: "DISCONNECTED",
-      content: "DISCONNECTED: Click to open portal"
-    })
     exports.subscribed_devices = exports.subscribed_devices.filter(i=> i != device_id )
   }
   session.on("stop", disconnected)
