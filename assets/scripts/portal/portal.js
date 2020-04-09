@@ -133,6 +133,10 @@ function closeChatBox(){
 }
 
 function notify(msg) {
+  if(typeof(AndroidFunction) != 'undefined' && AndroidFunction.showNotification){
+    AndroidFunction.showNotification(msg)
+  }
+  
   if (!window.Notification) {
     return false
   }

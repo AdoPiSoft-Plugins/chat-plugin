@@ -1,5 +1,6 @@
 'use strict'
 var core = require('../../core')
+var notification = require("../store/notification")
 var { admin_socket, machine_id } = core
 var default_per_page = 8
 
@@ -13,7 +14,6 @@ exports.getClientMessages = async (req, res, next) => {
     var order = [['created_at', 'DESC']]
     var where = { mobile_device_id }
     var result = await core.dbi.models.Chat.findAndCountAll({ where, limit: per_page, offset, order })
-
     res.json({
       chats: result.rows,
       count: result.rows.length,
@@ -41,8 +41,10 @@ exports.sendToClient = async(req, res, next)=>{
       is_read_by_user: false
     })
     var device = await core.devices_manager.findByMAC(device_db_instance.mac_address)
-    if(device)
+    if(device){
       device.emit("chat", chat)
+      notification.add(device_db_instance.id, {title: "Message", content: `Admin: ${chat.message}`})
+    }
     admin_socket.emitAdmin('chat', chat)
 
     res.json(chat)

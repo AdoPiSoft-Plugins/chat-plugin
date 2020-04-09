@@ -18,5 +18,6 @@ router.delete('/chat-plugin/chats/:mobile_device_id', core.middlewares.auth, cha
 router.get('/chat-plugin/portal/chats', chats_ctrl.getMessages)
 router.post('/chat-plugin/portal/chat', chats_ctrl.sendMessage)
 router.get('/chat-plugin/portal/mark-read', chats_ctrl.readAdminMessages)
+router.get('/client/notifications', devices_ctrl.getNotifications)
 
 module.exports = router
