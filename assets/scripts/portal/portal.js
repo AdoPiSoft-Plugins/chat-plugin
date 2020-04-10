@@ -355,7 +355,7 @@ function promptAppInstallation(){
   li.id = 'message-0'
   var innerHTML = '<div class="message received">'
   innerHTML = innerHTML + '<strong class="sender">Admin</strong><br/>'
-  innerHTML = innerHTML + '<pre class="text" style="padding-bottom: 0;margin-bottom: 0;">We have an Android App for you to conveniently open the captive portal and to receive notifications. Click the download link below to install it. Disregard this message if you already installed it.</pre>'
+  innerHTML = innerHTML + '<pre class="text" style="padding-bottom: 0;margin-bottom: 0;">We have an Android App for you to conveniently open the captive portal and to receive notifications. Click the download button below to install it. Disregard this message if you already installed it.</pre>'
   innerHTML = innerHTML + '<p style=" text-align: center; "><a style=" background: #209e91!important; color: white !important; padding: 10px; border-radius: 10px; display: inline-block; width: 210px; text-align: center; margin:10px;" href="/plugins/chat-plugin/assets/captive-portal.apk">Download App</a></p>';
   innerHTML = innerHTML + '<small class="time">' + formatDate(new Date()) + '</small></div>'
   li.innerHTML = innerHTML
