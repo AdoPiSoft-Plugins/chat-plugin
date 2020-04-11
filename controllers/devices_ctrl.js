@@ -123,7 +123,7 @@ exports.unmuteDevice = async(req, res, next)=>{
 exports.getNotifications = async(req, res, next)=>{
   try{
     var { device } = req
-    notification.subscribe(device)
+    await notification.subscribe(device)
     var [notif] = notification.get(device.db_instance.id) || []
     res.json(notif||{})
   }catch(e){
