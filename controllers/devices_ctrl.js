@@ -18,25 +18,20 @@ exports.get = async (req, res, next) => {
     var search_q = q
     var where = {}
     if (search_q) {
+      search_q = search_q.toLowerCase()
       where[Op.or] = [
-        {
-          id: search_q
-        },
-        {
-          hostname: {
-            [Op.like]: `%${search_q}%`
-          }
-        },
-        {
-          mac_address: {
-            [Op.like]: `%${search_q}%`
-          }
-        },
-        {
-          ip_address: {
-            [Op.like]: `%${search_q}%`
-          }
-        }
+        sequelize.where(
+          sequelize.fn('lower', sequelize.col('hostname')),
+          {[Op.like] : `%${search_q}%` }
+        ),
+        sequelize.where(
+          sequelize.fn('lower', sequelize.col('mac_address')),
+          {[Op.like] : `%${search_q}%` }
+        ),
+        sequelize.where(
+          sequelize.fn('lower', sequelize.col('ip_address')),
+          {[Op.like] : `%${search_q}%` }
+        ),
       ]
       var statuses = ['connected', 'disconnected']
       if(statuses.includes(search_q)){
