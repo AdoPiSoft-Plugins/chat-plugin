@@ -127,7 +127,6 @@ exports.getNotifications = async(req, res, next)=>{
     var [notif] = notification.get(device.db_instance.id) || []
     res.json(notif||{})
   }catch(e){
-    console.log(e)
     next(e)
   }
 }
