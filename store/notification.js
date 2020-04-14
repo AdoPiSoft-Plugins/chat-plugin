@@ -23,10 +23,10 @@ exports.subscribe = async(device)=>{
   function disconnected(){
     clearInterval(interval)
     exports.subscribed_devices = exports.subscribed_devices.filter(i=> i != device_id )
-    exports.add(device_id, {
-      title: "DISCONNECTED",
-      content: "Click here to add time or data."
-    })
+    // exports.add(device_id, {
+    //   title: "DISCONNECTED",
+    //   content: "Click here to add time or data."
+    // })
   }
   var sessions = await sessions_manager.getDeviceSessions(device)
   interval = setInterval(()=>{
