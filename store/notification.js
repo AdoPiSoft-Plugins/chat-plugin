@@ -16,28 +16,41 @@ exports.subscribed_devices = []
 exports.subscribe = async(device)=>{
   var device_id = device.db_instance.id
   if(exports.subscribed_devices.includes(device_id)) return
-  var session = await sessions_manager.hasRunningSession(device)
-  if(!session) return
+  if(!(await sessions_manager.hasRunningSession(device))) return
   exports.subscribed_devices.push(device_id)
-  var notified;
-  var interval = setInterval(()=>{
-    var {
-      type,
-      data_mb,
-      data_consumption_mb,
-      running_time_seconds,
-      remaining_time_seconds
-    } = session.db_instance
 
-    var megabytes = (type == 'data' || type == 'time_or_data')
-      ? data_mb - data_consumption_mb
-      : data_consumption_mb
+  var notified, interval;
+  function disconnected(){
+    clearInterval(interval)
+    exports.subscribed_devices = exports.subscribed_devices.filter(i=> i != device_id )
+    exports.add(device_id, {
+      title: "DISCONNECTED",
+      content: "Click here to add time or data."
+    })
+  }
+  var sessions = await sessions_manager.getDeviceSessions(device)
+  interval = setInterval(()=>{
+    var s = sessions.map(i=> i.toJSON() )
+    var running_session = s.find(i => i.status == 'running' )
+    if(!running_session) return disconnected();
 
-    var seconds = type == 'subscription'
-      ? running_time_seconds
-      : remaining_time_seconds
-    var warn = ['time_or_data', 'data'].includes(type) && (megabytes <= 20 && megabytes >= 10 || megabytes <= 5)
-    warn = warn || (['subscription', 'time', 'time_or_data'].includes(type) && (seconds <= 300 && seconds >= 290 || seconds <= 60) )
+    var seconds = s.filter(i => ['subscription', 'time', 'time_or_data'].includes(i.type))
+    .reduce((t, _s, i) => {
+      return t + _s.remaining_time_seconds
+    }, 0)
+
+    var standalone_time = s.filter(i=> i.type == 'time').reduce((t, _s, i)=>{
+      return t + _s.remaining_time_seconds
+    }, 0)
+
+    var megabytes = s.filter(i => ['time_or_data', 'data'].includes(i.type))
+    .reduce((t, _s, i) => {
+      return t + (_s.data_mb - _s.data_consumption_mb)
+    }, 0)
+
+    var warn = (megabytes <= 20 && megabytes >= 10 || (megabytes <= 5 && megabytes > 0))
+    warn = warn || (seconds <= 300 && seconds >= 290 || (seconds <= 60 && seconds > 0))
+    warn = warn && standalone_time <= 300
 
     if(warn){
       if (!notified){
@@ -50,11 +63,6 @@ exports.subscribe = async(device)=>{
     }else{
       notified = false
     }
-  }, 1000)
-  var disconnected = ()=>{
-    clearInterval(interval)
-    exports.subscribed_devices = exports.subscribed_devices.filter(i=> i != device_id )
-  }
-  session.on("stop", disconnected)
-  session.on("pause", disconnected)
+
+  }, 3000)
 }
