@@ -5,6 +5,8 @@ var { router } = core
 var devices_ctrl = require('./controllers/devices_ctrl')
 var chats_ctrl = require('./controllers/chats_ctrl')
 
+router.get('/chat-plugin/setting', chats_ctrl.getSettings)
+router.post('/chat-plugin/setting', core.middlewares.auth, chats_ctrl.updateSettings)
 router.get('/chat-plugin/devices', core.middlewares.auth, devices_ctrl.get)
 router.get('/chat-plugin/device/:mobile_device_id', devices_ctrl.getDeviceData)
 router.post('/chat-plugin/chats/:mobile_device_id/mute', core.middlewares.auth, devices_ctrl.muteDevice)

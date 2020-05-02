@@ -1,10 +1,14 @@
 var chats_api_url = "/chat-plugin/portal/chats";
-var send_api_url = "/chat-plugin/portal/chat"
-var device_api_url = "/client/device"
+var send_api_url = "/chat-plugin/portal/chat";
+var device_api_url = "/client/device";
+var settings_api_url = "/chat-plugin/setting";
+var apk_download_prompt = "We have an Android App for you to conveniently open the captive portal and to receive notifications. Click the download button below to install it. Disregard this message if you already installed it.";
+var apk_link = "/plugins/chat-plugin/assets/captive-portal.apk";
 var mark_read_api_url = "/chat-plugin/portal/mark-read"
 var chatBoxOpened = false
 var device
 var os;
+var hide_portal_button = false;
 
 function httpGet(url, cb){
   var xmlhttp
@@ -77,6 +81,7 @@ function hasRead(){
 
 function initChatBox(){
   var el = document.querySelector('.chat-box')
+  if(!el) return
   var width = Math.min(450, window.innerWidth-20)
   var height = Math.min(650, window.innerHeight-20)
   el.style.width = width+"px"
@@ -230,6 +235,16 @@ function unmute(){
   input.disabled = false
 }
 
+function initSettings(cb){
+  httpGet(settings_api_url, function(data){
+    data = JSON.parse(data);
+    apk_download_prompt = data.apk_download_prompt;
+    apk_link = data.apk_link;
+    hide_portal_button = data.hide_portal_button;
+    if(cb) cb(data);
+  })
+}
+
 var chats = []
 function initChats(){
   var socket = Socket.getInstance()
@@ -292,6 +307,9 @@ function initChats(){
 
         if(chat.sender_id != device.id){
           notify(capitalize(chat.admin_username)+": "+chat.message);
+          if(window.JSInterface){
+            window.JSInterface.messageReceived(chat.admin_username, chat.message)
+          }
         }
 
         if(!chatBoxOpened){
@@ -309,6 +327,17 @@ function initChats(){
   setTimeout(function(){
     promptAppInstallation()
   }, 3000)
+  
+  setTimeout(function(){
+    if(window.warning_sound && window.JSInterface){
+      window.warning_sound.subscribe(function(p){
+        var seconds = p.seconds || "";
+        var standalone_time = p.standalone_time || "";
+        var megabytes = p.megabytes || "";
+        window.JSInterface.warning(seconds, standalone_time, megabytes)
+      })
+    }
+  }, 5000)
 }
 
 var page = 1
@@ -355,8 +384,8 @@ function promptAppInstallation(){
   li.id = 'message-0'
   var innerHTML = '<div class="message received">'
   innerHTML = innerHTML + '<strong class="sender">Admin</strong><br/>'
-  innerHTML = innerHTML + '<pre class="text" style="padding-bottom: 0;margin-bottom: 0;">We have an Android App for you to conveniently open the captive portal and to receive notifications. Click the download button below to install it. Disregard this message if you already installed it.</pre>'
-  innerHTML = innerHTML + '<p style=" text-align: center; "><a style=" background: #209e91!important; color: white !important; padding: 10px; border-radius: 10px; display: inline-block; width: 210px; text-align: center; margin:10px;" href="/plugins/chat-plugin/assets/captive-portal.apk">Download App</a></p>';
+  innerHTML = innerHTML + '<pre class="text" style="padding-bottom: 0;margin-bottom: 0;">'+apk_download_prompt+'</pre>'
+  innerHTML = innerHTML + '<p style=" text-align: center; "><a style=" background: #209e91!important; color: white !important; padding: 10px; border-radius: 10px; display: inline-block; width: 210px; text-align: center; margin:10px;" href="'+apk_link+'">Download App</a></p>';
   innerHTML = innerHTML + '<small class="time">' + formatDate(new Date()) + '</small></div>'
   li.innerHTML = innerHTML
   ul.append( li )
@@ -366,7 +395,6 @@ function promptAppInstallation(){
 
 (function () {
   'use strict';
-
   setTimeout(function(){
     if(!document.getElementById('chat-plugin')){
       var chat_plugin = document.createElement('div')
@@ -379,10 +407,19 @@ function promptAppInstallation(){
     }
   }, 1000)
 
-  setTimeout(function(){
-    initChatBox()
-    initChats()
-    animateIcon()
+  var i = setInterval(function(){
+    if(document.querySelector('.chat-box')){
+      initSettings(function(){
+        if(hide_portal_button){
+          document.getElementById('chat-plugin').style.display = 'none';
+          return false;
+        }
+        initChatBox()
+        initChats()
+        animateIcon()
+      })
+      clearInterval(i)
+    }
   }, 2000)
 
   window.addEventListener("resize", function(){

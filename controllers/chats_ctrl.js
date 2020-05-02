@@ -1,8 +1,28 @@
 'use strict'
 var core = require('../../core')
 var notification = require("../store/notification")
-var { admin_socket, machine_id } = core
+var { admin_socket, machine_id, plugin_config } = core
+var config = require("../config.js")
 var default_per_page = 8
+
+exports.getSettings = async(req, res, next)=>{
+  try{
+    var { plugins } = await plugin_config.read()
+    var cfg = plugins.find(p=> p.id == config.id )
+    res.json(cfg)
+  }catch(e){
+    next(e)
+  }
+}
+
+exports.updateSettings = async(req, res, next)=>{
+  try{
+    await plugin_config.updatePlugin(config.id, req.body)
+    res.json({})
+  }catch(e){
+    next(e)
+  }
+}
 
 exports.getClientMessages = async (req, res, next) => {
   try{

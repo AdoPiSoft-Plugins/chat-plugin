@@ -1,10 +1,12 @@
 'use strict'
+var config = require("./config")
 var router = require("./router")
 var models = require("./models")
 var { app } = require('../core')
 
 module.exports = {
-  async init(){
+  async init(id){
+    config.id = id
     await models.init()
     app.use(router)
   },

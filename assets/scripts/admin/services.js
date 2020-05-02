@@ -30,6 +30,14 @@
       this.markMessagesRead = function(mobile_device_id){
         return $http.post('/chat-plugin/chats/'+mobile_device_id+'/mark-read').catch(CatchHttpError);
       }
+      
+      this.getSettings = function(){
+        return $http.get('/chat-plugin/setting').catch(CatchHttpError)
+      }
+      
+      this.updateSettings = function(params){
+        return $http.post('/chat-plugin/setting', params).catch(CatchHttpError)
+      }
     }
   ])
   .service('DevicesService', [
