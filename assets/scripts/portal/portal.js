@@ -127,6 +127,10 @@ function openChatBox(){
   scrollToBottom()
   chatBoxOpened = true
   hasRead()
+  
+  var msgr = document.getElementById("wh-widget-send-button")
+  if(msgr)
+    msgr.style.display = "none";
 }
 
 function closeChatBox(){
@@ -136,6 +140,10 @@ function closeChatBox(){
   var el = document.querySelector('.chat-box')
   el.style.display = 'none'
   chatBoxOpened = false
+  
+  var msgr = document.getElementById("wh-widget-send-button")
+  if(msgr)
+    msgr.style.display = "";
 }
 
 function notify(msg) {
