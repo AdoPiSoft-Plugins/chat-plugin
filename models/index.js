@@ -6,7 +6,7 @@ var MutedDevice = require('./muted_device')
 
 var model_files = {
   Chat,
-  MutedDevice
+  MutedDevice,
 }
 
 exports.init = async () => {
