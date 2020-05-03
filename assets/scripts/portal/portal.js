@@ -246,8 +246,10 @@ function unmute(){
 function initSettings(cb){
   httpGet(settings_api_url, function(data){
     data = JSON.parse(data);
-    apk_download_prompt = data.apk_download_prompt;
-    apk_link = data.apk_link;
+    if(data.apk_download_prompt)
+      apk_download_prompt = data.apk_download_prompt;
+    if(data.apk_link)
+      apk_link = data.apk_link;
     hide_portal_button = data.hide_portal_button;
     if(cb) cb(data);
   })
