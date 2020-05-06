@@ -1,5 +1,9 @@
 'use strict'
+
+var path = require('path')
 var core = require('../../core')
+var util = require('util')
+var fs = require('fs')
 var notification = require("../store/notification")
 var { admin_socket, machine_id, plugin_config } = core
 var config = require("../config.js")
@@ -19,6 +23,33 @@ exports.updateSettings = async(req, res, next)=>{
   try{
     await plugin_config.updatePlugin(config.id, req.body)
     res.json({})
+  }catch(e){
+    next(e)
+  }
+}
+
+exports.uploadApk = async(req, res, next)=>{
+  var apk_dir = path.join(process.env.APPDIR, 'uploads')
+  try{
+    var file = (req.files || {}).file
+    if (!file) return res.json({})
+    console.log(file)
+    if (file.truncated)
+      return res.status(422).json({message: 'File too large'})
+    var upload_path = path.join(apk_dir, file.name)
+    var mv = util.promisify(file.mv)
+    await mv(upload_path)
+    
+    var { plugins } = await plugin_config.read()
+    var cfg = plugins.find(p=> p.id == config.id )
+    
+    // cleanup old
+    if(cfg.apk_link)
+      fs.unlink(path.join(process.env.APPDIR, cfg.apk_link), ()=>{});
+    
+    cfg.apk_link = `/uploads/${file.name}`
+    await plugin_config.updatePlugin(config.id, cfg)
+    res.json(cfg)
   }catch(e){
     next(e)
   }
