@@ -395,7 +395,7 @@ function promptAppInstallation(){
   var innerHTML = '<div class="message received">'
   innerHTML = innerHTML + '<strong class="sender">Admin</strong><br/>'
   innerHTML = innerHTML + '<pre class="text" style="padding-bottom: 0;margin-bottom: 0;">'+apk_download_prompt+'</pre>'
-  innerHTML = innerHTML + '<p style=" text-align: center; "><a style=" background: #209e91!important; color: white !important; padding: 10px; border-radius: 10px; display: inline-block; width: 210px; text-align: center; margin:10px;" href="'+apk_link+'">Download App</a></p>';
+  innerHTML = innerHTML + '<p style=" text-align: center; "><a style=" background: #209e91!important; color: white !important; padding: 10px; border-radius: 10px; display: inline-block; width: 210px; text-align: center; margin:10px;" href="'+apk_link+'?ref='+Math.random()+'">Download App</a></p>';
   innerHTML = innerHTML + '<small class="time">' + formatDate(new Date()) + '</small></div>'
   li.innerHTML = innerHTML
   ul.append( li )
