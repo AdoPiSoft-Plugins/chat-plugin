@@ -18,7 +18,9 @@ exports.init = async () => {
   for(var i = 0; i < keys.length; i++){
     var k = keys[i]
     dbi.models[k] = model_files[k](db, Sequelize)
-    await dbi.models[k].sync({alter: true})
+    try{
+      await dbi.models[k].sync({alter: true})
+    }catch(e){}
   }
 
   var default_scope = {
