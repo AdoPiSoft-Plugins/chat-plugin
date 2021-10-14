@@ -121,7 +121,7 @@ function array_move(arr, old_index, new_index) {
         }else{
           $scope.loadDevice(chat.sender_id).then(function(d){
             d.has_unread = true
-          })
+          }).catch(function(e){})
         }
         $timeout(function(){
           $scope.$parent.has_unread = _.findIndex($scope.devices, function(d){ return d.has_unread }) >= 0;

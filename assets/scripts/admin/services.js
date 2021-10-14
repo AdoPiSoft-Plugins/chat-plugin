@@ -54,7 +54,7 @@
       }
 
       this.getDeviceData = function(mobile_device_id){
-        return $http.get('/chat-plugin/device/'+mobile_device_id).catch(CatchHttpError);
+        return $http.get('/chat-plugin/device/'+mobile_device_id)
       }
 
       this.muteDevice = function(mobile_device_id){
