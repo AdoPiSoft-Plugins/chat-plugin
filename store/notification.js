@@ -1,5 +1,4 @@
-'use strict'
-var { sessions_manager } = require('plugin-core')
+var { sessions_manager } = require('@adopisoft/plugin-core')
 
 exports.data = {}
 exports.get = (device_id) => {

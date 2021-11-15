@@ -1,5 +1,4 @@
-'use strict'
-var core = require('plugin-core')
+var core = require('@adopisoft/plugin-core')
 var notification = require('../store/notification')
 var default_per_page = 20
 
