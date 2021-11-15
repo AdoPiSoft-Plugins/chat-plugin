@@ -1,7 +1,7 @@
 var express = require('express')
 var fileUpload = require('express-fileupload')
-var devices_ctrl = require('./controllers/devices_ctrl')
-var chats_ctrl = require('./controllers/chats_ctrl')
+var devices_ctrl = require('./controllers/devices_ctrl.js')
+var chats_ctrl = require('./controllers/chats_ctrl.js')
 var core = require('@adopisoft/plugin-core')
 var { middlewares } = core
 var { cookie_parser, ipv4, user_agent, device_reg, auth } = middlewares

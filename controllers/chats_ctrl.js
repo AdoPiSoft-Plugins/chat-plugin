@@ -3,12 +3,13 @@ var core = require('@adopisoft/plugin-core')
 var util = require('util')
 var fs = require('fs')
 var notification = require('../store/notification')
+var config = require('../config.js')
 var { admin_socket, machine_id } = core
 var default_per_page = 8
 
 exports.getSettings = async (req, res, next) => {
   try {
-    var { plugins } = await plugin_config.read()
+    var { plugins } = await config.read()
     // eslint-disable-next-line eqeqeq
     var cfg = plugins.find(p => p.id == config.id)
     res.json(cfg)
@@ -19,7 +20,7 @@ exports.getSettings = async (req, res, next) => {
 
 exports.updateSettings = async (req, res, next) => {
   try {
-    await plugin_config.updatePlugin(config.id, req.body)
+    await config.save(config.id, req.body)
     res.json({})
   } catch (e) {
     next(e)
@@ -38,7 +39,7 @@ exports.uploadApk = async (req, res, next) => {
     var upload_path = path.join(apk_dir, file.name)
     var mv = util.promisify(file.mv)
     await mv(upload_path)
-    var { plugins } = await plugin_config.read()
+    var { plugins } = await config.read()
     // eslint-disable-next-line eqeqeq
     var cfg = plugins.find(p => p.id == config.id)
     // cleanup old
@@ -46,7 +47,7 @@ exports.uploadApk = async (req, res, next) => {
       fs.unlink(path.join(process.env.APPDIR, cfg.apk_link), () => {})
     }
     cfg.apk_link = `/uploads/${file.name}`
-    await plugin_config.updatePlugin(config.id, cfg)
+    await config.save(config.id, cfg)
     res.json(cfg)
   } catch (e) {
     next(e)
