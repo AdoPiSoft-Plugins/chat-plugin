@@ -3,10 +3,10 @@ var fileUpload = require('express-fileupload')
 var devices_ctrl = require('./controllers/devices_ctrl')
 var chats_ctrl = require('./controllers/chats_ctrl')
 var core = require('@adopisoft/plugin-core')
-var { router, middlewares } = core
+var { middlewares } = core
 var { cookie_parser, ipv4, user_agent, device_reg, auth } = middlewares
-
 var device_middlewares = [ipv4, user_agent, device_reg]
+var router = express.Router()
 
 router.use(cookie_parser)
 router.use(express.json())
