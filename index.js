@@ -1,15 +1,11 @@
-var config = require('./config')
 var router = require('./router')
 var models = require('./models')
-var { app } = require('plugin-core')
+var { app } = require('@adopisoft/plugin-core')
+var { name } = require('./package.json')
 
 module.exports = {
-  async init (id) {
-    config.id = id
+  async init () {
     await models.init()
-    app.use(router)
-  },
-  uninstall () {
-    // called with you uninstall the plugin
+    app.use(name, router)
   }
 }

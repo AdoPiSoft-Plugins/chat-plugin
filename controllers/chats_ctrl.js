@@ -1,12 +1,9 @@
-'use strict'
-
 var path = require('path')
-var core = require('plugin-core')
+var core = require('@adopisoft/plugin-core')
 var util = require('util')
 var fs = require('fs')
 var notification = require('../store/notification')
-var { admin_socket, machine_id, plugin_config } = core
-var config = require('../config.js')
+var { admin_socket, machine_id } = core
 var default_per_page = 8
 
 exports.getSettings = async (req, res, next) => {

@@ -1,6 +1,4 @@
-'use strict'
-
-var { dbi, machine_id } = require('plugin-core')
+var { dbi, machine_id } = require('@adopisoft/plugin-core')
 var Chat = require('./chat')
 var MutedDevice = require('./muted_device')
 
@@ -10,7 +8,6 @@ var model_files = {
 }
 
 exports.init = async () => {
-  if (!dbi) return
   var { sequelize, Sequelize } = dbi
   var db = await sequelize.getInstance()
 
@@ -18,9 +15,6 @@ exports.init = async () => {
   for (var i = 0; i < keys.length; i++) {
     var k = keys[i]
     dbi.models[k] = model_files[k](db, Sequelize)
-    try {
-      await dbi.models[k].sync({alter: true})
-    } catch (e) {}
   }
 
   var default_scope = {

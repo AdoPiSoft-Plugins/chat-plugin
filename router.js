@@ -1,78 +1,42 @@
-'use strict'
-
-var core = require('plugin-core')
-var { router, middlewares } = core
+var express = require('express')
+var fileUpload = require('express-fileupload')
 var devices_ctrl = require('./controllers/devices_ctrl')
 var chats_ctrl = require('./controllers/chats_ctrl')
-var { express, bodyParser, fileUpload, ipv4, device_reg } = middlewares
+var core = require('@adopisoft/plugin-core')
+var { router, middlewares } = core
+var { cookie_parser, ipv4, user_agent, device_reg, auth } = middlewares
 
-router.get('/chat-plugin/setting', chats_ctrl.getSettings)
-router.post('/chat-plugin/setting',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  core.middlewares.auth,
-  chats_ctrl.updateSettings
-)
+var device_middlewares = [ipv4, user_agent, device_reg]
 
-router.post('/chat-plugin/upload-apk',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  core.middlewares.auth,
-  fileUpload(),
-  chats_ctrl.uploadApk
-)
+router.use(cookie_parser)
+router.use(express.json())
+router.use(express.urlencoded({ extended: true }))
 
-router.get('/chat-plugin/devices', core.middlewares.auth, devices_ctrl.get)
-router.get('/chat-plugin/device/:mobile_device_id', devices_ctrl.getDeviceData)
-router.post('/chat-plugin/chats/:mobile_device_id/mute',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  core.middlewares.auth,
-  devices_ctrl.muteDevice
-)
+router.get('/setting', chats_ctrl.getSettings)
+router.post('/setting', auth, chats_ctrl.updateSettings)
+router.post('/upload-apk', auth, fileUpload(), chats_ctrl.uploadApk)
 
-router.post('/chat-plugin/chats/:mobile_device_id/unmute',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  core.middlewares.auth,
-  devices_ctrl.unmuteDevice
-)
+router.get('/devices', auth, devices_ctrl.get)
+router.get('/device/:mobile_device_id', devices_ctrl.getDeviceData)
+router.post('/chats/:mobile_device_id/mute', auth, devices_ctrl.muteDevice)
 
-router.get('/chat-plugin/chats/:mobile_device_id', core.middlewares.auth, chats_ctrl.getClientMessages)
-router.post('/chat-plugin/chats/bulk-send',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  core.middlewares.auth,
-  chats_ctrl.bulkSendToClients
-)
+router.post('/chats/:mobile_device_id/unmute', auth, devices_ctrl.unmuteDevice)
 
-router.post('/chat-plugin/chats/:mobile_device_id',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  core.middlewares.auth,
-  chats_ctrl.sendToClient
-)
+router.get('/chats/:mobile_device_id', auth, chats_ctrl.getClientMessages)
+router.post('/chats/bulk-send', auth, chats_ctrl.bulkSendToClients)
 
-router.post('/chat-plugin/chats/:mobile_device_id/mark-read',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  core.middlewares.auth,
-  chats_ctrl.readClientMessages
-)
+router.post('/chats/:mobile_device_id', auth, chats_ctrl.sendToClient)
 
-router.delete('/chat-plugin/chats/:mobile_device_id', core.middlewares.auth, chats_ctrl.deleteConversation)
+router.post('/chats/:mobile_device_id/mark-read', auth, chats_ctrl.readClientMessages)
 
-router.get('/chat-plugin/portal/chats', ipv4, device_reg, chats_ctrl.getMessages)
-router.post('/chat-plugin/portal/chat',
-  express.urlencoded({ extended: true }),
-  bodyParser.json(),
-  ipv4, device_reg,
-  chats_ctrl.sendMessage
-)
+router.delete('/chats/:mobile_device_id', auth, chats_ctrl.deleteConversation)
 
-router.get('/chat-plugin/portal/mark-read', ipv4, device_reg, chats_ctrl.readAdminMessages)
+router.get('/portal/chats', ...device_middlewares, chats_ctrl.getMessages)
+router.post('/portal/chat', ...device_middlewares, chats_ctrl.sendMessage)
 
-router.get('/client/notifications', devices_ctrl.getNotifications)
-router.get('/chat-plugin/unread-device-ids', devices_ctrl.getUnreadDeviceIds)
+router.get('/portal/mark-read', ...device_middlewares, chats_ctrl.readAdminMessages)
+
+router.get('/notifications', devices_ctrl.getNotifications)
+router.get('/unread-device-ids', devices_ctrl.getUnreadDeviceIds)
 
 module.exports = router
