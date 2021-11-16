@@ -1,4 +1,5 @@
-var { dbi, machine_id } = require('@adopisoft/plugin-core')
+var core = require('@adopisoft/plugin-core')
+var { dbi, machine_id } = core
 var Chat = require('./chat')
 var MutedDevice = require('./muted_device')
 

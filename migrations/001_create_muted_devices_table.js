@@ -1,6 +1,6 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('chats', {
+    await queryInterface.createTable('muted_devices', {
       id: {
         primaryKey: true,
         type: Sequelize.UUID,

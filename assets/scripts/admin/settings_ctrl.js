@@ -2,7 +2,7 @@
   'use strict';
   var App = angular.module('Plugins')
   App.controller('ChatPluginSettingsCtrl', function($scope, ChatService, Upload, CatchHttpError, toastr){
-    var default_apk = "/plugins/chat-plugin/assets/captive-portal.apk"
+    var default_apk = '/public/plugins/chat-plugin/captive-portal.apk'
     ChatService.getSettings().then(function(cfg){
       var data = cfg.data
       $scope.apk_download_prompt = data.apk_download_prompt || "We have an Android App for you to conveniently open the captive portal and to receive notifications. Click the download button below to install it. Disregard this message if you already installed it."
