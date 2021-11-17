@@ -1,8 +1,8 @@
 const fs = require('fs-extra')
 const ini = require('ini')
 const path = require('path')
-const default_ini_path = path.resolve('./config/default.ini')
-const user_ini_path = path.resolve('./config/custom.ini')
+const default_ini_path = path.join(__dirname, 'config/default.ini')
+const user_ini_path = path.join(__dirname, 'config/custom.ini')
 
 module.exports = {
   async read () {

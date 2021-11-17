@@ -9,9 +9,7 @@ var default_per_page = 8
 
 exports.getSettings = async (req, res, next) => {
   try {
-    var { plugins } = await config.read()
-    // eslint-disable-next-line eqeqeq
-    var cfg = plugins.find(p => p.id == config.id)
+    var cfg = await config.read()
     res.json(cfg)
   } catch (e) {
     next(e)
@@ -20,8 +18,8 @@ exports.getSettings = async (req, res, next) => {
 
 exports.updateSettings = async (req, res, next) => {
   try {
-    await config.save(config.id, req.body)
-    res.json({})
+    await config.save(req.body)
+    res.json(req.body)
   } catch (e) {
     next(e)
   }
