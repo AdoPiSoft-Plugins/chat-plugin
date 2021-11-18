@@ -8,9 +8,6 @@
       controller: 'ChatPluginSettingsCtrl',
       url: '/chat-plugin',
       title: 'Chat Plugin',
-      sidebarMeta: {
-        order: 2,
-      },
     });
   });
 })();

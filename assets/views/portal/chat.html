@@ -1,162 +1,58 @@
-<style>
-  .chat-plugin .main-icon{
-    position: fixed;
-    bottom: 10px;
-    right: 0px;
-    color: #0183FF;
-    opacity:0.9;
-    font-size: 30px;
-    border-radius: 100%;
-    text-decoration: none;
-    width:auto;
-    height:auto;
-    z-index: 99999;
-  }
-  .chat-plugin .send-icon{
-    opacity: 0.6;
-  }
-  .chat-plugin .main-icon .unread-indicator{
-    position:absolute;
-    right:18px;
-    color:red;
-    top:-10px;
-    font-weight: bold;
-    font-size:41px;
-  }
-  .chat-plugin .main-icon:hover, .chat-plugin .main-icon:active{
-    opacity: 1 !important;
-  }
-  .chat-plugin .send-icon:hover, .chat-plugin .send-icon:active{
-    opacity: 1 !important;
-  }
-
-  .chat-plugin .chat-box{
-    display: inline-block;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.91);
-    right: 2px;
-    bottom: 1px;
-    border: 1px solid black;
-    box-shadow: 2px 10px 18px 2px grey;
-    border-radius: 3px;
-    color: white;
-    padding: 10px 0px;
-    z-index: 99999999;
-  }
-  .chat-plugin .chat-box h3, .chat-plugin .chat-box h4{
-    padding: 1px 15px;
-  }
-  .chat-plugin .chat-box .close{
-    float: right;
-    margin: 1px 15px;
-    width: 15px;
-    height: 15px;
-    opacity: 1;
-  }
-  .chat-plugin .chat-box .close img{
-    width: 100%;
-  }
-  .chat-plugin .send-msg-con{
-    border-top: 1px solid rgba(0, 0, 0, 0.91);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.91);
-    width: 100%;
-    position: absolute;
-    bottom: 0px;
-    background: white;
-  }
-  .chat-plugin .send-icon{
-    margin: 10px;
-  }
-  .chat-plugin .send-msg-con textarea{
-    border-radius: 0;
-    height: 104px;
-    min-height: 40px;
-    max-height: 50px;
-    border: none;
-    padding: 12px;
-  }
-  .chat-plugin .conversation{
-    color: black;
-    width: 100%;
-    height: 98%;
-    background: white;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    margin-top: 7px;
-  }
-  .chat-plugin .conversation ul{
-    padding: 25px;
-    list-style: none;
-  }
-  .chat-plugin .conversation ul .message{
-    margin-top: 20px;
-    border: 1px solid gray;
-    padding: 10px;
-    background: #f5f5f5;
-  }
-  .chat-plugin .conversation ul .message.sent{
-    text-align: right;
-    border-radius: 20px 20px 1px 20px;
-  }
-  .chat-plugin .conversation ul .message.received{
-    text-align: left;
-    border-radius: 20px 20px 20px 0px;
-  }
-  .chat-plugin .conversation ul .message pre{
-    border: none;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    white-space: pre-wrap ;       /* Since CSS 2.1 */
-    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-    white-space: -pre-wrap;      /* Opera 4-6 */
-    white-space: -o-pre-wrap;    /* Opera 7 */
-    word-wrap: break-word;       /* Internet Explorer 5.5+ */
-    word-break: break-word !important;
-  }
-
-  .message.sent, .message.sent * {
-    background: #209e91!important;
-    color: white !important;
-  }
-</style>
-
-<div class="chat-plugin">
-  <a href='javascript:void(0)' onclick="openChatBox()" class="main-icon">
-    <span class="unread-indicator" style="display:none;">*</span>
-    <!-- <img src="/plugins/chat-plugin/assets/images/question.png" class="normal" alt=""> -->
-    <i class="fa fa-comments normal" style="font-size:0px;">&nbsp;</i>
+<div class="chat-plugin" data-bind="ifnot: settings().hide_portal_button">
+  <a data-bind="click: openChatBox, style: mainIconStyle" class="main-icon">
+    <span class="unread-indicator" data-bind="style: unreadIndicatorStyle">*</span>
+    <!-- <img src="/plugins/chat-plugin/images/question.png" class="normal" alt=""> -->
+    <i class="fa fa-comments normal" data-bind="style: faIconStyle">&nbsp;</i>
     <!-- <img src="/plugins/chat-plugin/assets/images/question-o.png" class="active" alt=""> -->
   </a>
-  <div class='chat-box' style="display: none">
-    <a onclick="closeChatBox()" href="javascript:void(0)" class='close'>
+  <div class='chat-box' data-bind="style: chatBoxStyle">
+    <a data-bind="click: closeChatBox" class='close'>
       <i class="fa fa-close" style="color:white;">&nbsp;</i>
     </a>
     <h4>
-      <img src="/public/plugins/chat-plugin/assets/images/chat-support.png" alt="" style="width: 25px;margin: 0px 10px;">
+      <img src="/public/plugins/chat-plugin/images/chat-support.png" alt="" style="width: 25px;margin: 0px 10px;">
       Chat With Admin
     </h4>
     <div class="conversation">
       <ul class="list">
-        <li>
+        <!-- ko foreach: chats -->
+        <li data-bind="attr: {id: $data.id}">
+          <div class="message" data-bind="class: $parent.messageClass($data), css: {'new-message': $data.new}, style: {border: $data.new ? '3px solid #5cb85b' : ''}">
+            <strong class="sender">
+              <span data-bind="text: $parent.formatSender($data)"></span>
+            </strong>
+            <pre class="text" data-bind="text: $data.message"></pre>
+            <small class="time" data-bind="text: $parent.formatDate($data.created_at)"></small>
+          </div>
+        </li>
+        <!-- /ko -->
+        <li data-bind="ifnot: chats().length">
           <p> Loading messages ...</p>
+        </li>
+        <li>
+          <a class="message load-more" style="border-radius: 5px; display: inline-block; width: 100%; text-align: center;" data-bind="if: chats().length < totalChats(), click: loadMore">
+            <span class="text">Load more ...</span>
+          </a>
         </li>
       </ul>
     </div>
 
     <div class="send-msg-con">
-      <form onsubmit="return sendMessage(event)" class="form">
+      <form data-bind="click: sendMessage" class="form">
         <div class="input-group">
-          <textarea required name="message" id="chat_message" placeholder="Message ..." class="form-control" rows="1""></textarea>
-          <button type="submit" class="input-group-btn" style="
-          margin: 4px;
-          min-width:45px;
-          border: none;
-          background: transparent;
-          outline: none;
-          font-size: 30px;
-          color: #209e91;
-          display:inline-block;
-          padding:0;
-          ">
+          <textarea required data-bind="value: message" name="message" id="chat_message" placeholder="Message ..." class="form-control" rows="1" data-bind="style: textAreaStyle"></textarea>
+          <button
+            type="submit" class="input-group-btn" style="
+                                                         margin: 4px;
+                                                         min-width:45px;
+                                                         border: none;
+                                                         background: transparent;
+                                                         outline: none;
+                                                         font-size: 30px;
+                                                         color: #209e91;
+                                                         display:inline-block;
+                                                         padding:0;
+                                                         ">
             <span class="send-icon">
               <i class="fa fa-chevron-circle-right">&nbsp;</i>
             </span>

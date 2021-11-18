@@ -1,22 +1,12 @@
 (function () {
   'use strict';
+
   $(document).on('keypress', 'textarea', function (e) {
     if(e.which == 13 && !e.shiftKey) {
       e.preventDefault();
-      $(this).closest("form").submit()
+      $(this).closest('form').submit()
     }
   });
-
-  var chat_plugin = `<div id='chat-plugin' ng-controller='ChatPluginCtrl'>
-      <a href='javascript:void(0)' ng-click='toggleContacts()' class="main-icon fa {{showContacts ? 'fa-close' : 'fa-envelope-o'}}">
-        <span class='fa fa-asterisk' ng-show='has_unread'></span>
-      </a>
-      <contacts ng-show="showContacts"></contacts>
-      <chats ng-if="!!active_contact" contact="active_contact"></chats>
-    </div>`
-
-  if($('#chat-plugin').length <= 0)
-    $('body').append(chat_plugin)
 
   var App = angular.module('Plugins')
   App.controller('ChatPluginCtrl', function($scope, toastr, CatchHttpError, $timeout) {
@@ -49,7 +39,7 @@
           let chatBtn = '<button class="btn btn-info btn-xs init-chat device-'+device.id+'" title="Chat"><i class="fa fa-envelope-o"></i>'
           let hasUnread = data.includes(device.id)
           chatBtn += '<i class="unread-indicator" style="display:'+(hasUnread?'inline':'none')+';position:absolute;color:red;font-size:30px;margin-top:-14px;">*</i>';
-          
+
           chatBtn += '</button>';
           chatBtn = $(chatBtn);
 
@@ -70,32 +60,32 @@
   }
 
   var MainApp = angular.module("adopisoft")
+
   MainApp.config(function ($httpProvider) {
     $httpProvider.interceptors.push("clientsLoadFilter");
   })
-  .factory("clientsLoadFilter", function($q, $rootScope){
-    var service = {
-      request: function(d){
-        return d
-      },
-      response: function(d) {
-        var url = ((d||{}).config||{}).url || ""
-        if(!d.data) return d
-        if(!url.includes('/settings/clients')) return d;
+    .factory("clientsLoadFilter", function($q, $rootScope){
+      var service = {
+        request: function(d){
+          return d
+        },
+        response: function(d) {
+          var url = ((d||{}).config||{}).url || ""
+          if(!d.data) return d
+          if(!url.includes('/settings/clients')) return d;
 
-        setTimeout(function(){
-          renderChatButtons()
-        })
-        return d;
-      },
-      responseError: function(rejection) {
-        return $q.reject(rejection);
-      }
-    };
-    return service;
+          setTimeout(function(){
+            renderChatButtons()
+          })
 
-  });
+          return d;
+        },
+        responseError: function(rejection) {
+          return $q.reject(rejection);
+        }
+      };
+      return service;
 
-  
+    });
 
 })();

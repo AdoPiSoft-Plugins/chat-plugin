@@ -4,9 +4,16 @@ var devices_ctrl = require('./controllers/devices_ctrl.js')
 var chats_ctrl = require('./controllers/chats_ctrl.js')
 var core = require('@adopisoft/plugin-core')
 var { middlewares } = core
-var { cookie_parser, ipv4, user_agent, device_reg, auth } = middlewares
-var device_middlewares = [ipv4, user_agent, device_reg]
+var { cookie_parser, device_cookie, ipv4, user_agent, device_reg, auth } = middlewares
 var router = express.Router()
+
+var device_middlewares = [
+  ipv4,
+  user_agent,
+  device_cookie.read,
+  device_cookie.portalCookie,
+  device_reg
+]
 
 router.use(cookie_parser)
 router.use(express.json())
@@ -17,7 +24,7 @@ router.post('/setting', auth, chats_ctrl.updateSettings)
 router.post('/upload-apk', auth, fileUpload(), chats_ctrl.uploadApk)
 
 router.get('/devices', auth, devices_ctrl.get)
-router.get('/device/:mobile_device_id', devices_ctrl.getDeviceData)
+router.get('/device/:mobile_device_id', ...device_middlewares, devices_ctrl.getDeviceData)
 router.post('/chats/:mobile_device_id/mute', auth, devices_ctrl.muteDevice)
 
 router.post('/chats/:mobile_device_id/unmute', auth, devices_ctrl.unmuteDevice)

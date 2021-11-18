@@ -21,5 +21,15 @@
   "bugs": {
     "url": "https://bitbucket.org/adopisowifi/chat-plugin/issues"
   },
-  "homepage": "https://bitbucket.org/adopisowifi/chat-plugin#readme"
+  "homepage": "https://bitbucket.org/adopisowifi/chat-plugin#readme",
+  "metadata": {
+    "portal": {
+      "component": "chat-plugin"
+    },
+    "navigation": {
+      "icon": "fa fa-comment",
+      "text": "Chat Plugin",
+      "href": "plugins.chat_plugin"
+    }
+  }
 }

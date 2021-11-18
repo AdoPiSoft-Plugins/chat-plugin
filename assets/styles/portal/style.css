@@ -1,0 +1,119 @@
+.chat-plugin .main-icon{
+  position: fixed;
+  bottom: 10px;
+  right: 0px;
+  color: #0183FF;
+  opacity:0.9;
+  font-size: 30px;
+  border-radius: 100%;
+  text-decoration: none;
+  width:auto;
+  height:auto;
+  z-index: 99999;
+}
+.chat-plugin .send-icon{
+  opacity: 0.6;
+}
+.chat-plugin .main-icon .unread-indicator{
+  position:absolute;
+  right:18px;
+  color:red;
+  top:-10px;
+  font-weight: bold;
+  font-size:41px;
+}
+.chat-plugin .main-icon:hover, .chat-plugin .main-icon:active{
+  opacity: 1 !important;
+}
+.chat-plugin .send-icon:hover, .chat-plugin .send-icon:active{
+  opacity: 1 !important;
+}
+
+.chat-plugin .chat-box{
+  display: inline-block;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.91);
+  right: 2px;
+  bottom: 1px;
+  border: 1px solid black;
+  box-shadow: 2px 10px 18px 2px grey;
+  border-radius: 3px;
+  color: white;
+  padding: 10px 0px;
+  z-index: 99999999;
+}
+.chat-plugin .chat-box h3, .chat-plugin .chat-box h4{
+  padding: 1px 15px;
+}
+.chat-plugin .chat-box .close{
+  float: right;
+  margin: 1px 15px;
+  width: 15px;
+  height: 15px;
+  opacity: 1;
+}
+.chat-plugin .chat-box .close img{
+  width: 100%;
+}
+.chat-plugin .send-msg-con{
+  border-top: 1px solid rgba(0, 0, 0, 0.91);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.91);
+  width: 100%;
+  position: absolute;
+  bottom: 0px;
+  background: white;
+}
+.chat-plugin .send-icon{
+  margin: 10px;
+}
+.chat-plugin .send-msg-con textarea{
+  border-radius: 0;
+  height: 104px;
+  min-height: 40px;
+  max-height: 50px;
+  border: none;
+  padding: 12px;
+}
+.chat-plugin .conversation{
+  color: black;
+  width: 100%;
+  height: 98%;
+  background: white;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  margin-top: 7px;
+}
+.chat-plugin .conversation ul{
+  padding: 25px;
+  list-style: none;
+}
+.chat-plugin .conversation ul .message{
+  margin-top: 20px;
+  border: 1px solid gray;
+  padding: 10px;
+  background: #f5f5f5;
+}
+.chat-plugin .conversation ul .message.sent{
+  text-align: right;
+  border-radius: 20px 20px 1px 20px;
+}
+.chat-plugin .conversation ul .message.received{
+  text-align: left;
+  border-radius: 20px 20px 20px 0px;
+}
+.chat-plugin .conversation ul .message pre{
+  border: none;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  white-space: pre-wrap ;       /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;      /* Opera 4-6 */
+  white-space: -o-pre-wrap;    /* Opera 7 */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+  word-break: break-word !important;
+}
+
+.message.sent, .message.sent * {
+  background: #209e91!important;
+  color: white !important;
+}
+
