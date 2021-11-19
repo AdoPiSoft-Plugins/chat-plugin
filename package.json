@@ -26,10 +26,15 @@
     "portal": {
       "component": "chat-plugin"
     },
-    "navigation": {
-      "icon": "fa fa-comment",
-      "text": "Chat Plugin",
-      "href": "plugins.chat_plugin"
+    "admin": {
+      "navigation": [
+        {
+          "parentstate": "quickStart",
+          "icon": "fa fa-comment",
+          "text": "Chat Plugin",
+          "href": "plugins.chat_plugin"
+        }
+      ]
     }
   }
 }

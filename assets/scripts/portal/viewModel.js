@@ -1,8 +1,8 @@
 define([
   'knockout',
   'howler',
-  'toast',
-  'http'
+  'app/services/toast',
+  'core/services/http'
 ], function (ko, howler, toast, http) {
 
   var Howl = howler.Howl;
