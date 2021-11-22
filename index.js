@@ -1,6 +1,7 @@
 var router = require('./router')
 var models = require('./models')
-var { app } = require('@adopisoft/plugin-core')
+var _require = require('@adopisoft/require')
+var app = _require('app')
 
 module.exports = {
   async init () {

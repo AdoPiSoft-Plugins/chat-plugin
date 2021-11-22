@@ -1,10 +1,12 @@
-var core = require('@adopisoft/plugin-core')
+var _require = require('@adopisoft/require')
+var dbi = _require('core/dbi')
+var devices_manager = _require('core/devices_manager')
+var machine_id = _require('core/machine_id')
 var notification = require('../store/notification')
 var default_per_page = 20
 
 exports.get = async (req, res, next) => {
   try {
-    var { dbi } = core
     var { page, q, per_page } = req.query
     if (!per_page) per_page = default_per_page
     if (!page) page = 1
@@ -77,8 +79,8 @@ exports.get = async (req, res, next) => {
 exports.getDeviceData = async (req, res, next) => {
   try {
     var { mobile_device_id } = req.params
-    var is_muted = !!(await core.dbi.models.MutedDevice.findOne({ where: { mobile_device_id } }))
-    var device = await core.devices_manager.loadDevice(mobile_device_id)
+    var is_muted = !!(await dbi.models.MutedDevice.findOne({ where: { mobile_device_id } }))
+    var device = await devices_manager.loadDevice(mobile_device_id)
     res.json(Object.assign(device.toJSON(), { is_muted }))
   } catch (e) {
     next(e)
@@ -88,9 +90,9 @@ exports.getDeviceData = async (req, res, next) => {
 exports.muteDevice = async (req, res, next) => {
   try {
     var { mobile_device_id } = req.params
-    var device = await core.devices_manager.loadDevice(mobile_device_id)
-    await core.dbi.models.MutedDevice.create({
-      machine_id: core.machine_id,
+    var device = await devices_manager.loadDevice(mobile_device_id)
+    await dbi.models.MutedDevice.create({
+      machine_id: machine_id,
       mobile_device_id,
       muted_at: new Date()
     })
@@ -104,8 +106,8 @@ exports.muteDevice = async (req, res, next) => {
 exports.unmuteDevice = async (req, res, next) => {
   try {
     var { mobile_device_id } = req.params
-    var device = await core.devices_manager.loadDevice(mobile_device_id)
-    await core.dbi.models.MutedDevice.destroy({
+    var device = await devices_manager.loadDevice(mobile_device_id)
+    await dbi.models.MutedDevice.destroy({
       where: { mobile_device_id }
     })
     device.emit('chat:unmute')
@@ -117,7 +119,7 @@ exports.unmuteDevice = async (req, res, next) => {
 
 exports.getUnreadDeviceIds = async (req, res, next) => {
   try {
-    var result = await core.dbi.models.Chat.findAll({ where: {is_read_by_admin: false}, distinct: true, attributes: ['mobile_device_id'] })
+    var result = await dbi.models.Chat.findAll({ where: {is_read_by_admin: false}, distinct: true, attributes: ['mobile_device_id'] })
     var mobile_device_ids = result.map(r => r.mobile_device_id)
     res.json(mobile_device_ids)
   } catch (e) {

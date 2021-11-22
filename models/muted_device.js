@@ -1,4 +1,3 @@
-'use strict'
 var model_name = 'MutedDevice'
 var table_name = 'muted_devices'
 var opts = {

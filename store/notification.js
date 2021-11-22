@@ -1,4 +1,5 @@
-var { sessions_manager } = require('@adopisoft/plugin-core')
+var _require = require('@adopisoft/require')
+var { sessions_manager } = _require('core')
 
 exports.data = {}
 exports.get = (device_id) => {

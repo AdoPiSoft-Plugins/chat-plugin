@@ -1,4 +1,3 @@
-'use strict'
 var model_name = 'Chat'
 var table_name = 'chats'
 var opts = {
