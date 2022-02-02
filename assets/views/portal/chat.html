@@ -122,9 +122,8 @@
 <div class="chat-plugin">
   <a href='javascript:void(0)' onclick="openChatBox()" class="main-icon">
     <span class="unread-indicator" style="display:none;">*</span>
-    <!-- <img src="/plugins/chat-plugin/assets/images/question.png" class="normal" alt=""> -->
-    <i class="fa fa-comments normal" style="font-size:0px;">&nbsp;</i>
-    <!-- <img src="/plugins/chat-plugin/assets/images/question-o.png" class="active" alt=""> -->
+    <img id="chat-icon" class="active" alt="">
+    <!-- <i class="fa fa-comments normal" style="font-size:0px;">&nbsp;</i> -->
   </a>
   <div class='chat-box' style="display: none">
     <a onclick="closeChatBox()" href="javascript:void(0)" class='close'>
@@ -145,7 +144,7 @@
     <div class="send-msg-con">
       <form onsubmit="return sendMessage(event)" class="form">
         <div class="input-group">
-          <textarea required name="message" id="chat_message" placeholder="Message ..." class="form-control" rows="1""></textarea>
+          <textarea required name="message" id="chat_message" placeholder="Message ..." class="form-control" rows="1"></textarea>
           <button type="submit" class="input-group-btn" style="
           margin: 4px;
           min-width:45px;
