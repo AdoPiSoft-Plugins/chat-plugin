@@ -3,9 +3,12 @@
   "version": "1.0.12",
   "description": "Chat Plugin for AdoPisoft Hotspot. You can now send messages/announcements to your customers. You can send one at a time or in bulk.",
   "main": "index.js",
-  "repository": "git@github.com:AdoPiSoft-Plugins/chat-plugin.git",
-  "author": "Jonel Lenteria <jlenteria98@gmail.com>",
+  "repository": "git+ssh://git@bitbucket.org/adopisowifi/chat-plugin.git",
+  "author": "arnel.lenteria@gmail.com",
   "license": "ISC",
+   "scripts": {
+    "postinstall": "python $APPDIR/python-scripts/plugin-postinstall.py $(basename $(pwd)) $(pwd)"
+  },
   "metadata": {
     "admin": {
       "navigation": [
