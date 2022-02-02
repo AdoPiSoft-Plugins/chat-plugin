@@ -6,9 +6,6 @@
   "repository": "git+ssh://git@bitbucket.org/adopisowifi/chat-plugin.git",
   "author": "arnel.lenteria@gmail.com",
   "license": "ISC",
-   "scripts": {
-    "postinstall": "python $APPDIR/python-scripts/plugin-postinstall.py $(basename $(pwd)) $(pwd)"
-  },
   "metadata": {
     "admin": {
       "navigation": [
@@ -20,6 +17,5 @@
         }
       ]
     }
-  },
-  "dependencies": {}
+  }
 }
