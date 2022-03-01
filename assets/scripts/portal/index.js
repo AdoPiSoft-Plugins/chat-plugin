@@ -149,7 +149,8 @@ function notify(msg) {
 
 function animateIcon(with_sound) {
   var icon = document.querySelector(".main-icon img.active");
-  var max = 80;
+  icon.style.marginRight = '20px'
+  var max = 55;
   var i = 1;
   var interval = setInterval(function() {
     i += 1;
