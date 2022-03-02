@@ -108,7 +108,7 @@ function array_move(arr, old_index, new_index) {
       })
     };
     var audio = new Audio;
-    audio.src = "/public/plugins/chat-plugin/assets/sounds/msg2.mp3";
+    audio.src = "/public/plugins/chat-plugin/sounds/msg2.mp3";
     audio.load();
     socket.on("chat", function(chat) {
       if (chat.sender_id) {
