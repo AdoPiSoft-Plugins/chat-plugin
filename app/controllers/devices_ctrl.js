@@ -135,7 +135,7 @@ exports.unmuteDevice = async(req, res, next) => {
 };
 exports.getUnreadDeviceIds = async(req, res, next) => {
   try {
-    const dbi = await chat_plugin_models.getInstance();
+    const dbi = await db.getInstance();
 
     var result = await dbi.models.Chat.findAll({
       where: {
