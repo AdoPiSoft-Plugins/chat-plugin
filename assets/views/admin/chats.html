@@ -32,8 +32,7 @@
       <li><a href="#">Separated link</a></li> -->
     </ul>
   </div>
-
-  <h3>{{ contact.hostname || contact.mac_address }} {{contact.ip_address?"("+contact.ip_address+")": '' }}</h3>
+  <h3 style="width: 85%;">{{contact.hostname ? contact.hostname + ' (' + contact.mac_address + ')' : contact.ip_address ? contact.mac_address + ' (' +contact.ip_address+ ')' : contact.mac_address}}</h3>
   <hr>
   <div class="conversation device-{{contact.id}}">
     <ul style="list-style:none">
