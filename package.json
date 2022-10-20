@@ -1,6 +1,6 @@
 {
   "name": "chat-plugin",
-  "version": "1.0.12",
+  "version": "1.0.14",
   "description": "Chat Plugin for AdoPisoft Hotspot. You can now send messages/announcements to your customers. You can send one at a time or in bulk.",
   "main": "index.js",
   "repository": "git+ssh://git@bitbucket.org/adopisowifi/chat-plugin.git",
